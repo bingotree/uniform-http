@@ -65,16 +65,25 @@ describe('Successful status codes', () => {
   });
 });
 describe('Error format', () => {
-  it('Error is json string and has uniform fields - code, message, etc', (done) => {
+  it('Error is a UniformHttpError object with key "details", containing uniform fields - status, message, etc', (done) => {
     const rest = getClient({
       port: 0,
     });
     rest.get('/routes')
       .then(() => done())
       .catch((err) => {
-        const error = JSON.parse(err.message);
-        assert.deepStrictEqual('code' in error, true);
-        assert.deepStrictEqual('message' in error, true);
+        assert.deepStrictEqual(typeof err, 'object');
+        assert.deepStrictEqual(err.name, 'UniformHttpError');
+        assert.deepStrictEqual('message' in err, true);
+        assert.deepStrictEqual('details' in err, true);
+        assert.deepStrictEqual('originalError' in err.details, true);
+        assert.deepStrictEqual('message' in err.details, true);
+        assert.deepStrictEqual('originalMessage' in err.details, true);
+        assert.deepStrictEqual('status' in err.details, true);
+        assert.deepStrictEqual('statusText' in err.details, true);
+        assert.deepStrictEqual('originalStatusText' in err.details, true);
+        assert.deepStrictEqual('headers' in err.details, true);
+        assert.deepStrictEqual('data' in err.details, true);
         done();
       });
   });
@@ -87,8 +96,8 @@ describe('Error status codes', () => {
     rest.get('/routes')
       .then(() => done())
       .catch((err) => {
-        const error = JSON.parse(err.message);
-        assert.deepStrictEqual(error.code, 503);
+        const error = err.details;
+        assert.deepStrictEqual(error.status, 503);
         done();
       });
   });

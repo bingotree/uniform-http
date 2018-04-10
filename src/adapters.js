@@ -1,4 +1,14 @@
 import axios from 'axios';
+import HttpStatus from 'http-status-codes';
+
+class UniformHttpError extends Error {
+  constructor(message, details) {
+    super(message);
+    this.stack = Error().stack;
+    this.details = details;
+    this.name = 'UniformHttpError';
+  }
+}
 
 class Adapter {
   constructor(config = {}) {
@@ -8,7 +18,7 @@ class Adapter {
     this.config = Object.assign({}, Adapter.defaultConfig, config);
   }
   static errorHandler(error) {
-    return error; // should return, *not* throw an error.
+    return new UniformHttpError(error.message, { originalError: error }); // should return, *not* throw an error.
   }
 }
 // --- Static data members.
@@ -18,9 +28,6 @@ Adapter.defaultConfig = {
   protocols: ['http'], // , https
   protocol: 'http', // default protocol
   timeout: 10000, // ms
-};
-Adapter.errorCodes = {
-  503: { code: 503, message: 'Service Unavailable' },
 };
 
 
@@ -77,25 +84,37 @@ class AxiosAdapter extends Adapter {
     };
   }
   static errorHandler(axiosError) {
-    let result;
+    // Defaults
+    const errorDetails = {
+      originalError: axiosError, // So we can access stack trace, etc
+      message: 'An error occurred.', // Client facing message.
+      originalMessage: axiosError.message, // The actual error message.
+      status: 0, // the http status code, we use '0' for client errors.
+      statusText: null, // Uniform HTTP status text - based on status code
+      originalStatusText: null, // The text the remote server sends us.
+      headers: null, // remote server response headers
+      data: null, // remote server data
+    };
     if (axiosError.response) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
-      result = {
-        code: axiosError.response.status,
-        message: axiosError.response.data,
-        headers: axiosError.responseHeaders,
-      };
+      errorDetails.status = axiosError.response.status;
+      errorDetails.statusText = HttpStatus.getStatusText(axiosError.response.status);
+      errorDetails.originalStatusText = axiosError.response.statusText;
+      errorDetails.data = axiosError.response.data;
+      errorDetails.headers = axiosError.responseHeaders;
     } else if (axiosError.request) {
-      // The request was made but no response was received
+      // 503 The request was made but no response was received
       // `axiosError.request` is an instance of XMLHttpRequest in the browser and an instance of
       // http.ClientRequest in node.js
-      [result] = [Adapter.errorCodes[503]];
+      errorDetails.status = HttpStatus.SERVICE_UNAVAILABLE;
+      errorDetails.statusText = HttpStatus.getStatusText(HttpStatus.SERVICE_UNAVAILABLE);
+      errorDetails.message = HttpStatus.getStatusText(HttpStatus.SERVICE_UNAVAILABLE);
     } else {
       // Client error.
-      result = { code: 0, message: axiosError.message };
+      // -- left blank intentionally, uses defaults --
     }
-    return new Error(JSON.stringify(result));
+    return new UniformHttpError(errorDetails.message, errorDetails);
   }
 }
 export default {
