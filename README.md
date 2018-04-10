@@ -72,4 +72,4 @@ If you have a particular format you like, you can write your own adapters.
 - Server mocks
 
 *MISC*
-- Avoid Jack Handy boat-whittling scenario?
+- [Avoid Jack Handy boat-whittling scenario?](https://gist.github.com/bingotree/8926ea8437087733116c7c7374898299)
