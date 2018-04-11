@@ -1,8 +1,8 @@
 import assert from 'assert';
-import getClient from '../index';
+import createHttpClient from '../index';
 
 describe('Setup and network connection', () => {
-  const rest = getClient();
+  const rest = createHttpClient();
   it('Should set a default config', () => {
     assert.deepStrictEqual(rest.config.port, 80);
     assert.deepStrictEqual(rest.config.domain, 'localhost');
@@ -22,7 +22,7 @@ describe('Setup and network connection', () => {
   it('Should throw an error if adapter is invalid', () => {
     let result = false;
     try {
-      getClient({}, 'null');
+      createHttpClient({}, 'null');
     } catch (error) {
       result = true;
     }
@@ -32,7 +32,7 @@ describe('Setup and network connection', () => {
 // TODO mock servers?
 describe('Response format', () => {
   it('Should return response data as a js object, with status code field', (done) => {
-    const rest = getClient({
+    const rest = createHttpClient({
       port: 3001,
     });
     rest.get('/routes')
@@ -53,7 +53,7 @@ describe('Response format', () => {
 });
 describe('Successful status codes', () => {
   it('Should return 200 response', (done) => {
-    const rest = getClient({
+    const rest = createHttpClient({
       port: 3001,
     });
     rest.get('/routes')
@@ -66,7 +66,7 @@ describe('Successful status codes', () => {
 });
 describe('Error format', () => {
   it('Error is a UniformHttpError object with key "details", containing uniform fields - status, message, etc', (done) => {
-    const rest = getClient({
+    const rest = createHttpClient({
       port: 0,
     });
     rest.get('/routes')
@@ -90,7 +90,7 @@ describe('Error format', () => {
 });
 describe('Error status codes', () => {
   it('Should return 503 -- bad port number', (done) => {
-    const rest = getClient({
+    const rest = createHttpClient({
       port: 0,
     });
     rest.get('/routes')

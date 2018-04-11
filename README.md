@@ -3,72 +3,67 @@ uniform-http
 
 A simple, extensible http library wrapper that ensures all request methods, response formats, and error formats are the same, regardless of the underlying implementation.
 
-## Objective
-The objective of this module is to give developers peace of mind -- that no matter what underlying http library they choose, the request methods, as well as the errors and responses will all have a uniform format.
+## Guarantees
+- Uniform, common-sense config format. `// { port: 3000, domain: 'www.example.com', etc ... }`
+- HttpClients created by this wrapper will have methods corresponding to the common http verbs: `get()`, `patch()`, `put()`, etc
+- All successful responses (2## range) return a uniform object with a http status code and data.
+- All error responses, *regardless of where the error originated*, return a `UniformHttpError` which contains details that include the http status code, original error details, etc.
+- A status code of `0` indicates an error on the client side.
+- Any situation where the remote server cannot be contacted, for whatever reason, will *always* return a UniformHttpError with status of `503 Service Unavailable`. 
+- Status codes use the very popular `http-status-codes` library, so follow the RFC formats.
 
-## Goals
-- Independent of underlying http library (axios, fetch, etc)
-- Uniform response format and error objects.
+## Installation
+
+`npm install uniform-http`
 
 ## Usage
-From the prompt
-`npm i --save uniform-http`
 
-In your script
 ```
-const getClient = require('uniform-http');
+const createHttpClient = require('uniform-http');
 const config = {
   domain: 'example.com',
   port: 3000,
   protocol: 'http' // default
 };
-const rest = getClient(config); // (config={}, adapter='axios')
+const rest = createHttpClient(config); // (config={}, adapter='axios')
 rest.get('/stuff')
-  .then(res => console.log(res.status, res.data))
+  .then(res => console.log(res.status, res.data)) // 200, { ... }
   .catch(err => {
-    let error = JSON.parse(err.message);
-    console.log(error.code, error.message);
+    console.log(error.name) // 'UniformHttpError'
+    const details = err.details;
+    console.log(details.status, details.statusText); // 503, 'Service Unavailable'
   });
 ```
 
+## Tests
+
+`npm test`
+
 ## Details / Features
 
-### Comes with default http library out of the box - Axios
-
-### Available adapters
+### Available http-lib adapters
 - axios
 
-### Response format 
-Follows the axios response format { data, headers, status, statusText, ... }
+### Comes with default http library out of the box - axios
+
+### Response format
+Guaranteed to always return the axios response format { data, headers, status, statusText, ... }
 
 ### Error format
-```
-Error Object :
-{  message: <JSON STRING>
-  ... usual Error stuff here
-}
-JSON.parse(Error.message): 
-{
-  code:
-  message: ... actual message from server
-}
-```
-
-### Uniform response codes.
-When unable to connect to server (eg client or server connection is down), a 503 error is always returned.
+Guaranteed to always be `UniformHttpError`s which always contain a `details` object with http status codes, text, and other helpful information.
                 
-## Extension / Write your own Adapters
-The goal of this module was to give developers peace of mind -- no matter what underlying http library they choose, the request methods, as well as the errors and responses will all have a uniform format.
+## Contributing
+This module is written using es6 and es7 experimental methods and then transpiled with babel. Download the repo and work in the src/ folder to contribute. Then run `npm build` and `npm build:test` to test.
 
-If you have a particular format you like, you can write your own adapters.
+Follow the model set out in the axios adapter and ensuring the *Guarantees* above are met.
 
 ## TODO
 *General*
 - Add adapters for more http libraries (axios-only right now).
-- Only install adapters needed (ie split adapters into their own npm modules)
+- Only install adapters needed (ie split adapters into their own npm modules, scope)
 
 *Testing*
-- Async testing in test.js could be fixed up up.
+- Async testing in test.js could be fixed up.
 - Server mocks
 
 *MISC*
