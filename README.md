@@ -37,7 +37,7 @@ rest.get('/stuff')
 
 ## Tests
 
-`npm test`
+`npm run test`
 
 ## Details / Features
 
@@ -53,7 +53,7 @@ Guaranteed to always return the axios response format { data, headers, status, s
 Guaranteed to always be `UniformHttpError`s which always contain a `details` object with http status codes, text, and other helpful information.
                 
 ## Contributing
-This module is written using es6 and es7 experimental methods and then transpiled with babel. Download the repo and work in the src/ folder to contribute. Then run `npm build` and `npm build:test` to test.
+This module is written using es6 and es7 experimental methods and then transpiled with babel. Download the repo and work in the src/ folder to contribute. Then run `npm run build` and `npm run build:test` to test.
 
 Follow the model set out in the axios adapter and ensuring the *Guarantees* above are met.
 

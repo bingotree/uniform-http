@@ -2,19 +2,20 @@
   "name": "uniform-http",
   "version": "0.1.0",
   "description": "A simple, extensible http library wrapper that ensures all request methods, response formats, and error formats are the same, regardless of the underlying implementation.",
-  "main": "./dist/index.js",
+  "main": "./lib/index.js",
   "engines": {
-  "node": ">=5.7.0"
+  "node": ">=8.0.0"
   },
   "scripts": {
-    "fix": "./node_modules/.bin/eslint --fix src",
-    "lint": "./node_modules/.bin/eslint src",
-    "watch": "./node_modules/.bin/watch 'npm run build' --ignoreDotFiles src",
-    "build": "./node_modules/.bin/babel src/ -d dist/",
-    "build:fix": "npm run fix || ./node_modules/.bin/babel src/ -d dist/",
-    "test": "./node_modules/.bin/mocha --exit dist/test/index.js",
+    "lint:fix": "npm run lint -- --fix",
+    "lint": "eslint src",
+    "watch": "watch 'npm run build' --ignoreDotFiles src",
+    "build": "babel src/ -d lib/",
+    "build:fix": "npm run lint:fix || npm run build",
+    "test": "mocha --exit lib/test/index.js",
     "build:test": "npm run build && npm run test",
-    "start": "node dist/index.js"
+    "start": "node lib/index.js",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
