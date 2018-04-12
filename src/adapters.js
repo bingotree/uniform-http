@@ -42,30 +42,30 @@ class AxiosAdapter extends Adapter {
   }
   get(endpoint = '/', params = {}) {
     return new Promise((resolve, reject) => this.axios.get(endpoint, { params })
-      .then(res => resolve(AxiosAdapter.responseHandler(res)))
-      .catch(err => reject(AxiosAdapter.errorHandler(err))));
+      .then(res => resolve(AxiosAdapter.responseFormatter(res)))
+      .catch(err => reject(AxiosAdapter.errorFormatter(err))));
   }
   post(endpoint = '/', data = {}, params = {}) {
     return new Promise((resolve, reject) => this.axios.post(endpoint, data, { params })
-      .then(res => resolve(AxiosAdapter.responseHandler(res)))
-      .catch(err => reject(AxiosAdapter.errorHandler(err))));
+      .then(res => resolve(AxiosAdapter.responseFormatter(res)))
+      .catch(err => reject(AxiosAdapter.errorFormatter(err))));
   }
   put(endpoint = '/', data = {}, params = {}) {
     return new Promise((resolve, reject) => this.axios.put(endpoint, data, { params })
-      .then(res => resolve(AxiosAdapter.responseHandler(res)))
-      .catch(err => reject(AxiosAdapter.errorHandler(err))));
+      .then(res => resolve(AxiosAdapter.responseFormatter(res)))
+      .catch(err => reject(AxiosAdapter.errorFormatter(err))));
   }
   patch(endpoint = '/', data = {}, params = {}) {
     return new Promise((resolve, reject) => this.axios.patch(endpoint, data, { params })
-      .then(res => resolve(AxiosAdapter.responseHandler(res)))
-      .catch(err => reject(AxiosAdapter.errorHandler(err))));
+      .then(res => resolve(AxiosAdapter.responseFormatter(res)))
+      .catch(err => reject(AxiosAdapter.errorFormatter(err))));
   }
   delete(endpoint = '/', params = {}) {
     return new Promise((resolve, reject) => this.axios.delete(endpoint, { params })
-      .then(res => resolve(AxiosAdapter.responseHandler(res)))
-      .catch(err => reject(AxiosAdapter.errorHandler(err))));
+      .then(res => resolve(AxiosAdapter.responseFormatter(res)))
+      .catch(err => reject(AxiosAdapter.errorFormatter(err))));
   }
-  static responseHandler(axiosResponse) {
+  static responseFormatter(axiosResponse) {
     return {
       status: axiosResponse.status,
       statusText: axiosResponse.statusText,
@@ -73,7 +73,7 @@ class AxiosAdapter extends Adapter {
       data: axiosResponse.data,
     };
   }
-  static errorHandler(axiosError) {
+  static errorFormatter(axiosError) {
     // Defaults
     const errorDetails = {
       originalError: axiosError, // So we can access stack trace, etc
