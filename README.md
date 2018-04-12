@@ -59,6 +59,7 @@ Follow the model set out in the axios adapter and ensuring the *Guarantees* abov
 
 ## TODO
 *General*
+- config-less requests ... eg `get('http://domain.com:30/foo?bar=baz', ...)`
 - Add adapters for more http libraries (axios-only right now).
 - Only install adapters needed (ie split adapters into their own npm modules, scope)
 

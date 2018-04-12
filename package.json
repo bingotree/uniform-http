@@ -4,7 +4,7 @@
   "description": "A simple, extensible http library wrapper that ensures all request methods, response formats, and error formats are the same, regardless of the underlying implementation.",
   "main": "./lib/index.js",
   "engines": {
-  "node": ">=8.0.0"
+    "node": ">=8.0.0"
   },
   "scripts": {
     "lint:fix": "npm run lint -- --fix",

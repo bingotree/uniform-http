@@ -11,7 +11,7 @@ describe('Setup and network connection', () => {
   it('init() should allow for the config to be changed', () => {
     const newConfig = {
       port: 3000,
-      domain: 'www.google.com',
+      domain: 'www.example.com',
       protocol: 'https',
     };
     rest.init(newConfig);
@@ -29,48 +29,41 @@ describe('Setup and network connection', () => {
     assert.strictEqual(result, true);
   });
 });
-// TODO mock servers?
 describe('Response format', () => {
-  it('Should return response data as a js object, with status code field', (done) => {
+  it('Response is js object, with status fields', () => {
     const rest = createHttpClient({
-      port: 3001,
+      domain: 'www.example.com'
     });
-    rest.get('/routes')
+    return (rest.get('/')
       .then((res) => {
         assert.deepStrictEqual(typeof res, 'object');
         assert.deepStrictEqual('data' in res, true);
         assert.deepStrictEqual('status' in res, true);
         assert.deepStrictEqual('statusText' in res, true);
         assert.deepStrictEqual('headers' in res, true);
-        assert.deepStrictEqual(typeof res.data, 'object');
         assert.deepStrictEqual(typeof res.status, 'number');
         assert.deepStrictEqual(typeof res.statusText, 'string');
         assert.deepStrictEqual(typeof res.headers, 'object');
-        done();
-      })
-      .catch((err) => { console.log(err.message); assert.strictEqual(false, true); done(); });
+      }));
   });
 });
 describe('Successful status codes', () => {
-  it('Should return 200 response', (done) => {
+  it('Should return 200 response', () => {
     const rest = createHttpClient({
-      port: 3001,
+      domain: 'www.example.com'
     });
-    rest.get('/routes')
+    return (rest.get('/')
       .then((res) => {
         assert.deepStrictEqual(res.status, 200);
-        done();
-      })
-      .catch((err) => { console.log(err.message); assert.strictEqual(false, true); done(); });
+      }));
   });
 });
 describe('Error format', () => {
-  it('Error is a UniformHttpError object with key "details", containing uniform fields - status, message, etc', (done) => {
+  it('Error is a UniformHttpError object with key "details", containing uniform fields - status, message, etc', () => {
     const rest = createHttpClient({
       port: 0,
     });
-    rest.get('/routes')
-      .then(() => done())
+    return (rest.get('/')
       .catch((err) => {
         assert.deepStrictEqual(typeof err, 'object');
         assert.deepStrictEqual(err.name, 'UniformHttpError');
@@ -84,21 +77,19 @@ describe('Error format', () => {
         assert.deepStrictEqual('originalStatusText' in err.details, true);
         assert.deepStrictEqual('headers' in err.details, true);
         assert.deepStrictEqual('data' in err.details, true);
-        done();
-      });
+      }));
   });
 });
 describe('Error status codes', () => {
-  it('Should return 503 -- bad port number', (done) => {
+  it('Should return 503 -- bad port number', () => {
     const rest = createHttpClient({
+      domain: 'www.example.com',
       port: 0,
     });
-    rest.get('/routes')
-      .then(() => done())
+    return (rest.get('/')
       .catch((err) => {
         const error = err.details;
         assert.deepStrictEqual(error.status, 503);
-        done();
-      });
+      }));
   });
 });
