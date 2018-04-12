@@ -61,7 +61,7 @@ describe('Successful status codes', () => {
 describe('Error format', () => {
   it('Error is a UniformHttpError object with key "details", containing uniform fields - status, message, etc', () => {
     const rest = createHttpClient({
-      port: 0,
+      domain: 'www.invalid.com',
     });
     return (rest.get('/')
       .catch((err) => {
@@ -81,10 +81,9 @@ describe('Error format', () => {
   });
 });
 describe('Error status codes', () => {
-  it('Should return 503 -- bad port number', () => {
+  it('Should return 503 -- invalid domain', () => {
     const rest = createHttpClient({
-      domain: 'www.example.com',
-      port: 0,
+      domain: 'www.invalid.com',
     });
     return (rest.get('/')
       .catch((err) => {
