@@ -32,7 +32,7 @@ describe('Setup and network connection', () => {
 describe('Response format', () => {
   it('Response is js object, with status fields', () => {
     const rest = createHttpClient({
-      domain: 'www.example.com'
+      domain: 'www.example.com',
     });
     return (rest.get('/')
       .then((res) => {
@@ -50,7 +50,7 @@ describe('Response format', () => {
 describe('Successful status codes', () => {
   it('Should return 200 response', () => {
     const rest = createHttpClient({
-      domain: 'www.example.com'
+      domain: 'www.example.com',
     });
     return (rest.get('/')
       .then((res) => {

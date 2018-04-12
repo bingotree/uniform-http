@@ -1,14 +1,6 @@
 import axios from 'axios';
 import HttpStatus from 'http-status-codes';
-
-class UniformHttpError extends Error {
-  constructor(message, details) {
-    super(message);
-    this.stack = Error().stack;
-    this.details = details;
-    this.name = 'UniformHttpError';
-  }
-}
+import UniformHttpError from './UniformHttpError';
 
 class Adapter {
   constructor(config = {}) {
@@ -17,8 +9,11 @@ class Adapter {
   init(config = {}) {
     this.config = Object.assign({}, Adapter.defaultConfig, config);
   }
-  static errorHandler(error) {
-    return new UniformHttpError(error.message, { originalError: error }); // should return, *not* throw an error.
+  static responseFormatter(response) {
+    throw new Error('Do not call this method directly. Implement it in an adapter.');
+  }
+  static errorFormatter(error) {
+    throw new Error('Do not call this method directly. Implement it in an adapter.');
   }
 }
 // --- Static data members.
@@ -29,7 +24,6 @@ Adapter.defaultConfig = {
   protocol: 'http', // default protocol
   timeout: 10000, // ms
 };
-
 
 // --- Adapters
 class AxiosAdapter extends Adapter {
@@ -71,10 +65,6 @@ class AxiosAdapter extends Adapter {
       .then(res => resolve(AxiosAdapter.responseHandler(res)))
       .catch(err => reject(AxiosAdapter.errorHandler(err))));
   }
-  //    post(endpoint, params)
-  //    patch(endpoint, params)
-  //    put(endpoint, params)
-  //    delete(endpoint)
   static responseHandler(axiosResponse) {
     return {
       status: axiosResponse.status,
@@ -96,7 +86,7 @@ class AxiosAdapter extends Adapter {
       data: null, // remote server data
     };
     if (axiosError.response) {
-      // The request was made and the server responded with a status code
+      // ie The request was made and the server responded with a status code
       // that falls out of the range of 2xx
       errorDetails.status = axiosError.response.status;
       errorDetails.statusText = HttpStatus.getStatusText(axiosError.response.status);
@@ -104,15 +94,15 @@ class AxiosAdapter extends Adapter {
       errorDetails.data = axiosError.response.data;
       errorDetails.headers = axiosError.responseHeaders;
     } else if (axiosError.request) {
-      // 503 The request was made but no response was received
+      // ie 503 The request was made but no response was received
       // `axiosError.request` is an instance of XMLHttpRequest in the browser and an instance of
       // http.ClientRequest in node.js
       errorDetails.status = HttpStatus.SERVICE_UNAVAILABLE;
       errorDetails.statusText = HttpStatus.getStatusText(HttpStatus.SERVICE_UNAVAILABLE);
       errorDetails.message = HttpStatus.getStatusText(HttpStatus.SERVICE_UNAVAILABLE);
     } else {
-      // Client error.
-      // -- left blank intentionally, uses defaults --
+      // ie Client error.
+      // -- left blank intentionally, use defaults --
     }
     return new UniformHttpError(errorDetails.message, errorDetails);
   }
