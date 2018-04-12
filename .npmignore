@@ -1,2 +1,4 @@
 src/
 .gitignore
+.eslintrc.json
+.babelrc
