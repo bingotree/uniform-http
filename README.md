@@ -64,8 +64,7 @@ Follow the model set out in the axios adapter and ensuring the *Guarantees* abov
 - Only install adapters needed (ie split adapters into their own npm modules, scope)
 
 *Testing*
-- Async testing in test.js could be fixed up.
-- Server mocks
+- Server mocks (testing currently requires a network connection)
 
 *MISC*
 - [Avoid Jack Handy boat-whittling scenario?](https://gist.github.com/bingotree/8926ea8437087733116c7c7374898299)
