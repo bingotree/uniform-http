@@ -1,6 +1,6 @@
 {
   "name": "uniform-http",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A simple, extensible http library wrapper that ensures all request methods, response formats, and error formats are the same, regardless of the underlying implementation.",
   "main": "./lib/index.js",
   "engines": {
