@@ -1,5 +1,8 @@
+
 uniform-http
 ============
+
+[![Build Status](https://travis-ci.org/bingotree/uniform-http.svg?branch=master)](https://travis-ci.org/bingotree/uniform-http)
 
 A simple, extensible http library wrapper that ensures all request methods, response formats, and error formats are the same, regardless of the underlying implementation.
 
